@@ -21,36 +21,6 @@ def buildDevelopBranch() {
 
 def buildMasterBranch() {
     echo "Master branch"
-
-    /* parallel (
-        "Checkstyle" : {
-                         stage('Checkstyle') {
-                             sh "./gradlew checkstyle"
-                         }
-                         publishHTML(target: [
-                               allowMissing: false,
-                               alwaysLinkToLastBuild: true,
-                               keepAll: true,
-                               reportDir: "settings/reports/checkstyle",
-                               reportFiles: 'checkstyle.html',
-                               reportName: 'Checkstyle HTML Report'
-                         ])
-                     },
-        "Findbugs" : {
-                         stage('findbugs') {
-                              sh "./gradlew clean assembleDevelopmentDebug -PBUILD_NUMBER=${env.BUILD_NUMBER}"
-                              sh "./gradlew findbugs"
-                          }
-                          publishHTML(target: [
-                                allowMissing: false,
-                                alwaysLinkToLastBuild: true,
-                                keepAll: true,
-                                reportDir: "settings/reports/findbugs",
-                                reportFiles: 'findbugs.html',
-                                reportName: 'Findbugs HTML Report'
-                          ])
-                     }
-    )*/
      stage('Check') {
          sh "./gradlew check"
      }
@@ -70,6 +40,22 @@ def buildMasterBranch() {
             reportFiles: 'lints.html',
             reportName: 'Lint HTML Report'
       ])
+      publishHTML(target: [
+          allowMissing: false,
+          alwaysLinkToLastBuild: true,
+          keepAll: true,
+          reportDir: "settings/reports/ktlint",
+          reportFiles: 'ktlint.xml',
+          reportName: 'KtLint XML Report'
+      ])
+    publishHTML(target: [
+          allowMissing: false,
+          alwaysLinkToLastBuild: true,
+          keepAll: true,
+          reportDir: "settings/reports/ktlint/format",
+          reportFiles: 'ktlint.xml',
+          reportName: 'KtLint Format XML Report'
+    ])
 }
 
 node {
