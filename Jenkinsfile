@@ -51,7 +51,7 @@ def buildMasterBranch() {
                           ])
                      }
     )*/
-    stage('Check') {
+     stage('Check') {
          sh "./gradlew check"
      }
      publishHTML(target: [
@@ -62,6 +62,14 @@ def buildMasterBranch() {
            reportFiles: 'checkstyle.html',
            reportName: 'Checkstyle HTML Report'
      ])
+     publishHTML(target: [
+            allowMissing: false,
+            alwaysLinkToLastBuild: true,
+            keepAll: true,
+            reportDir: "settings/reports/lint",
+            reportFiles: 'lints.html',
+            reportName: 'Lint HTML Report'
+      ])
 }
 
 node {
