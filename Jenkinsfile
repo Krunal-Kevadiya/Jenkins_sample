@@ -51,36 +51,18 @@ node {
             ]]
         ])
     }
-    post {
-        always {
-            echo 'One way or another, I have finished'
-            def name = env.BRANCH_NAME
-            if (name.startsWith('feature/')) {
-                buildFeatureBranch()
-            } else if (name == 'develop') {
-                buildDevelopBranch()
-            } else if (name.startsWith('release/')) {
-                buildReleaseBranch()
-            } else if (name == 'master') {
-                buildMasterBranch()
-            } else if (name.startsWith('hotfix/')) {
-                buildHotfixBranch()
-            } else {
-                error "Don't know what to do with this branch: ${name}"
-            }
-            /* deleteDir() clean up our workspace */
-        }
-        success {
-            echo 'I succeeeded!'
-        }
-        unstable {
-            echo 'I am unstable :/'
-        }
-        failure {
-            echo 'I failed :('
-        }
-        changed {
-            echo 'Things were different before...'
-        }
+    def name = env.BRANCH_NAME
+    if (name.startsWith('feature/')) {
+        buildFeatureBranch()
+    } else if (name == 'develop') {
+        buildDevelopBranch()
+    } else if (name.startsWith('release/')) {
+        buildReleaseBranch()
+    } else if (name == 'master') {
+        buildMasterBranch()
+    } else if (name.startsWith('hotfix/')) {
+        buildHotfixBranch()
+    } else {
+        error "Don't know what to do with this branch: ${name}"
     }
 }
