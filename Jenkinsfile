@@ -22,17 +22,34 @@ def buildDevelopBranch() {
 def buildMasterBranch() {
     echo "Master branch"
 
-    stage('Checkstyle') {
-        sh "./gradlew checkstyle"
-    }
-    publishHTML(target: [
-          allowMissing: false,
-          alwaysLinkToLastBuild: true,
-          keepAll: true,
-          reportDir: "settings/reports/checkstyle",
-          reportFiles: 'checkstyle.html',
-          reportName: 'Checkstyle HTML Report'
-    ])
+    parallel (
+        "Checkstyle" : {
+                         stage('Checkstyle') {
+                             sh "./gradlew checkstyle"
+                         }
+                         publishHTML(target: [
+                               allowMissing: false,
+                               alwaysLinkToLastBuild: true,
+                               keepAll: true,
+                               reportDir: "settings/reports/checkstyle",
+                               reportFiles: 'checkstyle.html',
+                               reportName: 'Checkstyle HTML Report'
+                         ])
+                     },
+        "Findbugs" : {
+                         stage('findbugs') {
+                              sh "./gradlew findbugs"
+                          }
+                          publishHTML(target: [
+                                allowMissing: false,
+                                alwaysLinkToLastBuild: true,
+                                keepAll: true,
+                                reportDir: "settings/reports/findbugs",
+                                reportFiles: 'findbugs.html',
+                                reportName: 'Findbugs HTML Report'
+                          ])
+                     }
+    )
 }
 
 node {
