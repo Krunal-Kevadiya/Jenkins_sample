@@ -14,6 +14,9 @@ def buildReleaseBranch() {
 
 def buildMasterBranch() {
     echo "Master branch"
+    stage('Checkstyle') {
+        sh "./gradlew checkstyle"
+    }
 }
 
 def buildHotfixBranch() {
@@ -24,7 +27,6 @@ def teamName = 'Krunal-Kevadiya'
 def repoName = 'Jenkins_sample'
 
 node {
-
     stage 'Checkout'
     checkout([
         $class: 'GitSCM',
