@@ -1,0 +1,25 @@
+// Top-level build file where you can add configuration options common to all sub-projects/modules.
+buildscript {
+    apply from: './settings/dependencies.gradle'
+    addRepos(repositories)
+
+    dependencies {
+        classpath deps.thirdParty.plugin
+        classpath deps.kotlin.plugin
+        classpath deps.fabric.plugin
+        classpath deps.google.services
+        classpath deps.staticTools.sonarqube
+        classpath deps.staticTools.jacoco
+    }
+}
+
+plugins {
+    id("com.diffplug.gradle.spotless").version("3.15.0")
+}
+
+allprojects {
+    addRepos(repositories)
+    addProjectSetting()
+}
+
+apply plugin: 'org.sonarqube'

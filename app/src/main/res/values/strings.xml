@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">JenkinsDemo</string>
+
+    <string name="btn_exit">Exit</string>
+
+    <string name="main_app_name">Application name: %s</string>
+    <string name="main_app_version">Application version: %s</string>
+    <string name="main_app_version_code">Application version code: %d</string>
+    <string name="txt_splash">Hello World!</string>
+</resources>

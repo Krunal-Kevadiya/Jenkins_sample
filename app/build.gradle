@@ -1,0 +1,194 @@
+apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-kapt'
+apply plugin: 'io.fabric'
+apply from: '../settings/codequality/quality.gradle'
+
+android {
+    compileSdkVersion build_versions.target_sdk
+
+    defaultConfig {
+        applicationId readApplicationId()
+        minSdkVersion build_versions.min_sdk
+        targetSdkVersion build_versions.target_sdk
+        manifestPlaceholders = [crashlyticsKey: readCrashlyticsKey()]
+        vectorDrawables.useSupportLibrary = true
+        multiDexEnabled true
+    }
+
+    packagingOptions {
+        exclude 'META-INF/rxjava.properties'
+    }
+
+    dataBinding {
+        enabled = true
+    }
+
+    androidExtensions {
+        experimental = true
+    }
+
+    lintOptions {
+        abortOnError false
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    signingConfigs {
+        debug {
+            keyAlias 'androiddebugkey'
+            keyPassword 'android'
+            storePassword 'android'
+            storeFile file("$project.rootDir/settings/keystore/debug.keystore")
+        }
+        release {
+            keyAlias 'androiddebugkey'
+            keyPassword 'android'
+            storePassword 'android'
+            storeFile file("$project.rootDir/settings/keystore/debug.keystore")
+        }
+    }
+
+    flavorDimensions "mode"
+    productFlavors {
+        production {
+            dimension "mode"
+            applicationId readApplicationId()
+            versionCode readVersionCode(flavorFiles.production)
+            versionName readVersionName(flavorFiles.production)
+
+            buildConfigField 'Boolean', "IS_CRASHLYTICS", 'true'
+        }
+        qa {
+            dimension "mode"
+            applicationId readApplicationId()
+            versionCode readVersionCode(flavorFiles.qa)
+            versionName readVersionName(flavorFiles.qa)
+
+            buildConfigField 'Boolean', "IS_CRASHLYTICS", 'true'
+        }
+        development {
+            dimension "mode"
+            applicationId readApplicationId()
+            versionCode readVersionCode(flavorFiles.development)
+            versionName readVersionName(flavorFiles.development)
+
+            buildConfigField 'Boolean', "IS_CRASHLYTICS", 'false'
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguard_list.each { pro_guard ->
+                proguardFile pro_guard
+            }
+            //signingConfig signingConfigs.release
+        }
+
+        debug {
+            minifyEnabled false
+            proguard_list.each { pro_guard ->
+                proguardFile pro_guard
+            }
+            //signingConfig signingConfigs.debug
+        }
+    }
+}
+
+dependencies {
+    // android support libraries
+    implementation deps.androidx.appcompat
+    implementation deps.androidx.material
+    implementation deps.androidx.v13
+    implementation deps.androidx.v4
+    implementation deps.androidx.cardview
+    implementation deps.androidx.vector_drawable
+    implementation deps.constraint.lib
+    implementation deps.androidx.recyclerview
+
+    // facebook login
+    implementation(deps.social.facebook_sdk, {
+        exclude group: 'com.android.support', module: 'support-v4'
+        exclude group: 'com.android.support', module: 'appcompat-v7'
+        exclude group: 'com.android.support', module: 'cardview-v7'
+    })
+
+    // twitter login
+    implementation(deps.social.twitter) {
+        transitive = true
+        exclude group: 'com.android.support', module: 'support-v4'
+        exclude group: 'com.squareup.retrofit', module: 'converter-gson'
+        exclude group: 'com.squareup.retrofit', module: 'retrofit'
+        exclude module: 'picasso'
+    }
+
+    // crashlytics
+    implementation(deps.fabric.lib) {
+        transitive = true
+    }
+
+    // api Service, json parsing
+    implementation deps.thirdParty.gson
+    implementation (deps.okhttp.logging, {
+        exclude group: 'com.squareup.okhttp'
+    })
+    implementation deps.okhttp.lib
+    implementation (deps.retrofit.lib, {
+        exclude group: 'com.squareup.okhttp3'
+    })
+    implementation (deps.retrofit.adapter_rx2, {
+        exclude group: 'com.squareup.retrofit'
+        exclude group: 'io.reactivex.rxjava2'
+    })
+    implementation (deps.retrofit.gson, {
+        exclude group: 'com.squareup.retrofit'
+    })
+
+    // sdp, ssp library for managing device compatibility
+    implementation deps.intuit.sdp
+    implementation deps.intuit.ssp
+
+    // RxJava - RxAndroid
+    implementation deps.reactivex.java2
+    implementation deps.reactivex.android2
+    implementation deps.reactivex.rxPermission
+    implementation deps.reactivex.rxBinding
+
+    //butterknife library
+    implementation deps.butterKnife.lib
+    kapt deps.butterKnife.compiler
+
+    // lazy image loading
+    implementation deps.picasso.lib
+    implementation deps.picasso.downloader
+
+    implementation deps.thirdParty.timber
+}
+
+def readVersionName(def buildType = "buildVariant") {
+    def version = readVersionFile(buildType)
+    return "${version['VERSION_MAJOR']}.${version['VERSION_MINOR']}.${version['VERSION_PATCH']}(${version['VERSION_CODE']})"
+}
+
+def readVersionCode(def buildType = "buildVariant") {
+    def version = readVersionFile(buildType)
+    def build = version['VERSION_CODE'] as int
+    return build
+}
+
+def readCrashlyticsKey() {
+    def version = readVersionFile(flavorFiles.project)
+    return "${version['FABRIC_API_TOKEN']}"
+}
+
+def readApplicationId() {
+    def version = readVersionFile(flavorFiles.project)
+    return "${version['APPLICATION_ID']}"
+}
+
+//apply plugin: 'com.google.gms.google-services'
