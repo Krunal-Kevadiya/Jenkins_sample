@@ -30,7 +30,7 @@ def buildMasterBranch() {
           allowMissing: false,
           alwaysLinkToLastBuild: true,
           keepAll: true,
-          reportDir: '${reportsDir}/checkstyle',
+          reportDir: "${reportsDir}/checkstyle",
           reportFiles: 'checkstyle.html',
           reportName: 'Checkstyle HTML Report'
     ])
