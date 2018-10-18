@@ -1,5 +1,16 @@
 #!/usr/bin/env groovy
 
+def teamName = 'Krunal-Kevadiya'
+def repoName = 'Jenkins_sample'
+
+def buildHotfixBranch() {
+    echo "Hotfix branch"
+}
+
+def buildReleaseBranch() {
+    echo "Release branch"
+}
+
 def buildFeatureBranch() {
     echo "Feature branch"
 }
@@ -8,23 +19,21 @@ def buildDevelopBranch() {
     echo "Develop branch"
 }
 
-def buildReleaseBranch() {
-    echo "Release branch"
-}
-
 def buildMasterBranch() {
     echo "Master branch"
     stage('Checkstyle') {
         sh "./gradlew checkstyle"
+
+        publishHTML(target: [
+              allowMissing: false,
+              alwaysLinkToLastBuild: true,
+              keepAll: true,
+              reportDir: '/var/lib/jenkins/${repoName}/settings/reports/checkstyle',
+              reportFiles: 'checkstyle.html',
+              reportName: 'Checkstyle HTML Report'
+        ])
     }
 }
-
-def buildHotfixBranch() {
-    echo "Hotfix branch"
-}
-
-def teamName = 'Krunal-Kevadiya'
-def repoName = 'Jenkins_sample'
 
 node {
     stage 'Checkout'
