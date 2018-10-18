@@ -2,6 +2,7 @@
 
 def teamName = 'Krunal-Kevadiya'
 def repoName = 'Jenkins_sample'
+def reportsDir = "settings/reports"
 
 def buildHotfixBranch() {
     echo "Hotfix branch"
@@ -25,15 +26,14 @@ def buildMasterBranch() {
     stage('Checkstyle') {
         sh "./gradlew checkstyle"
     }
-    echo "workspace directory is ${env.WORKSPACE}"
-    /* publishHTML(target: [
+    publishHTML(target: [
           allowMissing: false,
           alwaysLinkToLastBuild: true,
           keepAll: true,
-          reportDir: '/var/lib/jenkins/${repoName}/settings/reports/checkstyle',
+          reportDir: '${reportsDir}/checkstyle',
           reportFiles: 'checkstyle.html',
           reportName: 'Checkstyle HTML Report'
-    ]) */
+    ])
 }
 
 node {
