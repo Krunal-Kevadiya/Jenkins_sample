@@ -38,6 +38,7 @@ def buildMasterBranch() {
                      },
         "Findbugs" : {
                          stage('findbugs') {
+                              sh "./gradlew clean assembleDevelopmentDebug -PBUILD_NUMBER=${env.BUILD_NUMBER}"
                               sh "./gradlew findbugs"
                           }
                           publishHTML(target: [
