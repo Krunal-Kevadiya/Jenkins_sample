@@ -22,7 +22,7 @@ def buildDevelopBranch() {
 def buildMasterBranch() {
     echo "Master branch"
 
-    parallel (
+    /* parallel (
         "Checkstyle" : {
                          stage('Checkstyle') {
                              sh "./gradlew checkstyle"
@@ -50,7 +50,18 @@ def buildMasterBranch() {
                                 reportName: 'Findbugs HTML Report'
                           ])
                      }
-    )
+    )*/
+    stage('Check') {
+         sh "./gradlew check"
+     }
+     publishHTML(target: [
+           allowMissing: false,
+           alwaysLinkToLastBuild: true,
+           keepAll: true,
+           reportDir: "settings/reports/checkstyle",
+           reportFiles: 'checkstyle.html',
+           reportName: 'Checkstyle HTML Report'
+     ])
 }
 
 node {
