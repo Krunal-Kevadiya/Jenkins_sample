@@ -2,7 +2,6 @@
 
 def teamName = 'Krunal-Kevadiya'
 def repoName = 'Jenkins_sample'
-def reportsDir = "settings/reports"
 
 def buildHotfixBranch() {
     echo "Hotfix branch"
@@ -30,7 +29,7 @@ def buildMasterBranch() {
           allowMissing: false,
           alwaysLinkToLastBuild: true,
           keepAll: true,
-          reportDir: "${reportsDir}/checkstyle",
+          reportDir: "settings/reports/checkstyle",
           reportFiles: 'checkstyle.html',
           reportName: 'Checkstyle HTML Report'
     ])
