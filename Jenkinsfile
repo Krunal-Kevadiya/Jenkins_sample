@@ -23,19 +23,16 @@ def buildMasterBranch() {
     echo "Master branch"
 
     stage('Checkstyle') {
-        steps {
-            sh "./gradlew checkstyle"
-
-            publishHTML(target: [
-                  allowMissing: false,
-                  alwaysLinkToLastBuild: true,
-                  keepAll: true,
-                  reportDir: '/var/lib/jenkins/${repoName}/settings/reports/checkstyle',
-                  reportFiles: 'checkstyle.html',
-                  reportName: 'Checkstyle HTML Report'
-            ])
-        }
+        sh "./gradlew checkstyle"
     }
+    publishHTML(target: [
+          allowMissing: false,
+          alwaysLinkToLastBuild: true,
+          keepAll: true,
+          reportDir: '/var/lib/jenkins/${repoName}/settings/reports/checkstyle',
+          reportFiles: 'checkstyle.html',
+          reportName: 'Checkstyle HTML Report'
+    ])
 }
 
 node {
