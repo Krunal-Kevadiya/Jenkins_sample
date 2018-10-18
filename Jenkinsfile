@@ -20,17 +20,22 @@ def buildHotfixBranch() {
     echo "Hotfix branch"
 }
 
-def teamName = 'KevadiyaKrunalK'
-def repoName = 'jenkinsdemo'
+def teamName = 'Krunal-Kevadiya'
+def repoName = 'Jenkins_sample'
 
 node {
 
-    stage('Checkout') {
-            checkout([$class: 'GitSCM', branches: [[name: '*/master']],
-            userRemoteConfigs: [[url: 'ssh://git@bitbucket.org/KevadiyaKrunalK/jenkinsdemo.git']],
-            browser: [$class: 'BitbucketWeb', repoUrl: 'https://bitbucket.org/KevadiyaKrunalK/jenkinsdemo']]
-            )
-        }
+    stage 'Checkout'
+    checkout([
+        $class: 'GitSCM',
+        branches: [[name: env.BRANCH_NAME]],
+        doGenerateSubmoduleConfigurations: false,
+        extensions: [],
+        submoduleCfg: [],
+        userRemoteConfigs: [[
+            url: "https://github.com/${teamName}/${repoName}.git"
+        ]]
+    ])
 
     def name = env.BRANCH_NAME
     if (name.startsWith('feature/')) {
