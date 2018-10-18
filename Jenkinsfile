@@ -21,44 +21,51 @@ def buildDevelopBranch() {
 
 def buildMasterBranch() {
     echo "Master branch"
+
     stage('Checkstyle') {
-        sh "./gradlew checkstyle"
+        steps {
+            sh "./gradlew checkstyle"
+
+            publishHTML(target: [
+                  allowMissing: false,
+                  alwaysLinkToLastBuild: true,
+                  keepAll: true,
+                  reportDir: '/var/lib/jenkins/${repoName}/settings/reports/checkstyle',
+                  reportFiles: 'checkstyle.html',
+                  reportName: 'Checkstyle HTML Report'
+            ])
+        }
     }
-    publishHTML(target: [
-          allowMissing: false,
-          alwaysLinkToLastBuild: true,
-          keepAll: true,
-          reportDir: '/var/lib/jenkins/${repoName}/settings/reports/checkstyle',
-          reportFiles: 'checkstyle.html',
-          reportName: 'Checkstyle HTML Report'
-    ])
 }
 
 node {
-    stage 'Checkout'
-    checkout([
-        $class: 'GitSCM',
-        branches: [[name: env.BRANCH_NAME]],
-        doGenerateSubmoduleConfigurations: false,
-        extensions: [],
-        submoduleCfg: [],
-        userRemoteConfigs: [[
-            url: "https://github.com/${teamName}/${repoName}.git"
-        ]]
-    ])
+    stage('Checkout') {
+        steps {
+            checkout([
+                $class: 'GitSCM',
+                branches: [[name: env.BRANCH_NAME]],
+                doGenerateSubmoduleConfigurations: false,
+                extensions: [],
+                submoduleCfg: [],
+                userRemoteConfigs: [[
+                    url: "https://github.com/${teamName}/${repoName}.git"
+                ]]
+            ])
 
-    def name = env.BRANCH_NAME
-    if (name.startsWith('feature/')) {
-        buildFeatureBranch()
-    } else if (name == 'develop') {
-        buildDevelopBranch()
-    } else if (name.startsWith('release/')) {
-        buildReleaseBranch()
-    } else if (name == 'master') {
-        buildMasterBranch()
-    } else if (name.startsWith('hotfix/')) {
-        buildHotfixBranch()
-    } else {
-        error "Don't know what to do with this branch: ${name}"
+            def name = env.BRANCH_NAME
+            if (name.startsWith('feature/')) {
+                buildFeatureBranch()
+            } else if (name == 'develop') {
+                buildDevelopBranch()
+            } else if (name.startsWith('release/')) {
+                buildReleaseBranch()
+            } else if (name == 'master') {
+                buildMasterBranch()
+            } else if (name.startsWith('hotfix/')) {
+                buildHotfixBranch()
+            } else {
+                error "Don't know what to do with this branch: ${name}"
+            }
+        }
     }
 }
