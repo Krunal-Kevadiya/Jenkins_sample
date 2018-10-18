@@ -40,18 +40,20 @@ def buildMasterBranch() {
 
 node {
     stage('Checkout') {
-        steps {
-            checkout([
-                $class: 'GitSCM',
-                branches: [[name: env.BRANCH_NAME]],
-                doGenerateSubmoduleConfigurations: false,
-                extensions: [],
-                submoduleCfg: [],
-                userRemoteConfigs: [[
-                    url: "https://github.com/${teamName}/${repoName}.git"
-                ]]
-            ])
-
+        checkout([
+            $class: 'GitSCM',
+            branches: [[name: env.BRANCH_NAME]],
+            doGenerateSubmoduleConfigurations: false,
+            extensions: [],
+            submoduleCfg: [],
+            userRemoteConfigs: [[
+                url: "https://github.com/${teamName}/${repoName}.git"
+            ]]
+        ])
+    }
+    post {
+        always {
+            echo 'One way or another, I have finished'
             def name = env.BRANCH_NAME
             if (name.startsWith('feature/')) {
                 buildFeatureBranch()
@@ -66,6 +68,19 @@ node {
             } else {
                 error "Don't know what to do with this branch: ${name}"
             }
+            /* deleteDir() clean up our workspace */
+        }
+        success {
+            echo 'I succeeeded!'
+        }
+        unstable {
+            echo 'I am unstable :/'
+        }
+        failure {
+            echo 'I failed :('
+        }
+        changed {
+            echo 'Things were different before...'
         }
     }
 }
