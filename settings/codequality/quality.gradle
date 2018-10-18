@@ -326,5 +326,5 @@ project.parent.tasks["sonarqube"].dependsOn project.name + ":jacocoTestReport1"
 //Command
 preBuild.dependsOn('checkstyle')
 assemble.dependsOn('lint')
-check.dependsOn 'checkstyle', 'lint', 'spotlessApply', 'spotlessCheck'
+check.dependsOn 'checkstyle', 'lint', 'ktlint', 'ktlintFormat', 'spotlessApply', 'spotlessCheck'
 // ,'findbugs', 'pmd', 'lint', 'ktlint', 'ktlintFormat', 'spotlessApply', 'spotlessCheck', 'detekt'
